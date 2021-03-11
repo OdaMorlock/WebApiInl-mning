@@ -10,5 +10,7 @@ namespace WebApi_InlämningAttempt4.Services
     {
         Task<bool> CreateUserAsync(SignUpModel signUpModel);
 
+        Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel);
+
     }
 }

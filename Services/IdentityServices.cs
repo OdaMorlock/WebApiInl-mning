@@ -61,5 +61,42 @@ namespace WebApi_InlämningAttempt4.Services
             }
             return false;
         }
+
+        public async Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel)
+        {
+            if (! _context.Issues.Any(issue => issue.Id == createIssueModel.Id))
+            {
+
+                try
+                {
+                    var issue = new Issue()
+                    {
+                        IssueUserId = createIssueModel.IssueUserId,
+                        IssueUserFirstName = createIssueModel.IssueUserFirstName,
+                        Customer = createIssueModel.CustomerName,
+                        ActivityStatus = createIssueModel.ActiveStatus,
+                        FinishedStatus = createIssueModel.FinishedStatus,
+                        CurrentStatus = createIssueModel.CurrentStatus
+                    };
+
+                    issue.CreatedDateTime(createIssueModel.CreatedDate);
+                    _context.Issues.Add(issue);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+
+
+                }
+                catch 
+                {
+
+                    
+                }
+
+            }
+
+            return false;
+            
+        }
     }
 }

@@ -53,6 +53,21 @@ namespace WebApi_InlämningAttempt4.Controllers
             return new BadRequestResult();
         }
 
+
+
+        // POST api/<UsersController>
+        [AllowAnonymous]
+        [HttpPost("issuecreate")]
+        public async Task<IActionResult> IssueCreate([FromBody] CreateIssueModel createIssueModel)
+        {
+            if (await _identity.CreateIssueAsync(createIssueModel))
+            {
+                return new OkResult();
+            }
+            return new BadRequestResult();
+        }
+
+
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

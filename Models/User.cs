@@ -28,6 +28,7 @@ namespace WebApi_InlämningAttempt4.Models
             {
                 PasswordSalt = hmac.Key;
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
             }
         }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace WebApi_InlämningAttempt4.Models
 {
+
     public partial class Issue
     {
         public long Id { get; set; }
@@ -18,5 +19,17 @@ namespace WebApi_InlämningAttempt4.Models
         public string CurrentStatus { get; set; }
 
         public virtual IssueUser IssueUser { get; set; }
+
+        public DateTime CreatedDateTime (DateTime createdDate)
+        {
+            createdDate = DateTime.Now;
+            return createdDate;
+        }
+
+        public DateTime EditedDateTime(DateTime editedDate)
+        {
+            editedDate = DateTime.Now;
+            return editedDate;
+        }
     }
 }
