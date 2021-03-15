@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,5 +101,45 @@ namespace WebApi_InlämningAttempt4.Services
             return false;
             
         }
+
+        public async Task<bool> UpdateIssueAsync(UpdateIssueModel updateIssueModel)
+        {
+
+            if (_context.Issues.Any(issue => issue.Id == updateIssueModel.IssueId))
+            {
+                try
+                {
+
+                    var updateIssue = _context.Issues.FirstOrDefault(x => x.Id == updateIssueModel.IssueId);
+
+                    if (updateIssue != null)
+                    {
+                        updateIssue.IssueUserId = updateIssueModel.IssueUserId;
+                        updateIssue.IssueUserFirstName = updateIssueModel.IssueUserFirstName;
+                        updateIssue.Customer = updateIssueModel.CustomerName;
+                        updateIssue.ActivityStatus = updateIssueModel.ActiveStatus;
+                        updateIssue.FinishedStatus = updateIssueModel.FinishedStatus;
+                        updateIssue.CurrentStatus = updateIssueModel.CurrentStatusDecider(updateIssueModel.ActiveStatus, updateIssueModel.FinishedStatus);
+                        updateIssue.EditedDate = updateIssueModel.EditedDateTime();
+                        await _context.SaveChangesAsync();
+
+                    }
+
+
+                    return true;
+
+
+                }
+                catch
+                {
+
+
+                }
+
+            }
+
+            return false;
+        }
     }
 }
+    

@@ -12,5 +12,7 @@ namespace WebApi_InlämningAttempt4.Services
 
         Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel);
 
+        Task<bool> UpdateIssueAsync(UpdateIssueModel updateIssueModel);
+
     }
 }

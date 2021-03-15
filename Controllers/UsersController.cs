@@ -73,6 +73,17 @@ namespace WebApi_InlämningAttempt4.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
+        
+        [AllowAnonymous]
+        [HttpPut("issueupdate")]
+        public async Task<IActionResult> IssueUpdate([FromBody] UpdateIssueModel updateIssueModel)
+        {
+            if( await _identity.UpdateIssueAsync(updateIssueModel))
+            {
+                return new OkResult();
+            }
+            return new BadRequestResult();
+        }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
