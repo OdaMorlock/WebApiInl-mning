@@ -64,7 +64,7 @@ namespace WebApi_InlämningAttempt4.Services
 
         public async Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel)
         {
-            if (! _context.Issues.Any(issue => issue.Id == createIssueModel.Id))
+            if (! _context.Issues.Any(issue => issue.Customer == createIssueModel.CustomerName))
             {
 
                 try
@@ -76,10 +76,12 @@ namespace WebApi_InlämningAttempt4.Services
                         Customer = createIssueModel.CustomerName,
                         ActivityStatus = createIssueModel.ActiveStatus,
                         FinishedStatus = createIssueModel.FinishedStatus,
-                        CurrentStatus = createIssueModel.CurrentStatus
+                        CurrentStatus = createIssueModel.CurrentStatusDecider(createIssueModel.ActiveStatus, createIssueModel.FinishedStatus),
+                        CreatedDate = createIssueModel.CreatedDateTime(),
+                        EditedDate = createIssueModel.EditedDateTime()
+
                     };
 
-                    issue.CreatedDateTime(createIssueModel.CreatedDate);
                     _context.Issues.Add(issue);
                     await _context.SaveChangesAsync();
 

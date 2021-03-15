@@ -20,16 +20,18 @@ namespace WebApi_InlämningAttempt4.Models
 
         public virtual IssueUser IssueUser { get; set; }
 
-        public DateTime CreatedDateTime (DateTime createdDate)
+        public DateTime CreatedDateTime ()
         {
-            createdDate = DateTime.Now;
+           DateTime createdDate = DateTime.Now;
             return createdDate;
         }
 
-        public DateTime EditedDateTime(DateTime editedDate)
+        public DateTime EditedDateTime()
         {
-            editedDate = DateTime.Now;
+           DateTime editedDate = DateTime.Now;
             return editedDate;
         }
+
+       
     }
 }
