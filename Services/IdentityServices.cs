@@ -68,6 +68,7 @@ namespace WebApi_InlämningAttempt4.Services
             if (! _context.Issues.Any(issue => issue.Customer == createIssueModel.CustomerName))
             {
 
+
                 try
                 {
                     var issue = new Issue()
@@ -109,6 +110,8 @@ namespace WebApi_InlämningAttempt4.Services
             {
                 try
                 {
+
+                    //https://stackoverflow.com/questions/36144178/asp-net-web-api-controller-update-row
 
                     var updateIssue = _context.Issues.FirstOrDefault(x => x.Id == updateIssueModel.IssueId);
 
