@@ -143,6 +143,30 @@ namespace WebApi_InlämningAttempt4.Services
 
             return false;
         }
+
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssues()
+        {
+            var lists = new List<ListIssuesModel>();
+
+
+                foreach (var issue in await _context.Issues.ToListAsync())
+                {
+                    lists.Add(new ListIssuesModel { 
+                        IssuesId = issue.Id,
+                        CustomerName = issue.Customer, 
+                        IssueUser = issue.IssueUserFirstName, 
+                        CurrentStatus = issue.CurrentStatus, 
+                        CreatedDate = issue.CreatedDate, 
+                        EditedDate = issue.EditedDate });
+                }
+
+            return lists;
+        }
+
+        public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesBySearch()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
     

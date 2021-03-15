@@ -42,7 +42,6 @@ namespace WebApi_InlämningAttempt4.Controllers
         }
 
 
-        // POST api/<UsersController>
         [AllowAnonymous]
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpModel signUpModel)

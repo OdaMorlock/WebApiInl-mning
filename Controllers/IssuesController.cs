@@ -26,7 +26,21 @@ namespace WebApi_InlämningAttempt4.Controllers
             _identity = identity;
         }
 
-        // POST api/<UsersController>
+        [AllowAnonymous]
+        [HttpGet("listissues")]
+        public async Task<IActionResult> GetIssues()
+        {
+            return new OkObjectResult(await _identity.GetListOfIssues());
+        }
+
+        [AllowAnonymous]
+        [HttpGet("searchlistissues")]
+        public async Task<IActionResult> GetIssuesBySearch()
+        {
+
+        }
+
+
         [AllowAnonymous]
         [HttpPost("issuecreate")]
         public async Task<IActionResult> IssueCreate([FromBody] CreateIssueModel createIssueModel)
