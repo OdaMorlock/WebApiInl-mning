@@ -32,6 +32,22 @@ namespace WebApi_InlämningAttempt4.Models
             }
         }
 
+        public bool ValidatePasswordHash(string Passowrd)
+        {
+            using (var hmac = new HMACSHA512(PasswordSalt))
+            {
+                var computerHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(Passowrd));
+                for (int i = 0; i < computerHash.Length; i++)
+                {
+                    if (computerHash[i] != PasswordHash[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         public virtual ICollection<IssueUser> IssueUsers { get; set; }
     }
 }

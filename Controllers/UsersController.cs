@@ -27,19 +27,7 @@ namespace WebApi_InlämningAttempt4.Controllers
             _identity = identity;
         }
 
-        // GET: api/<UsersController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
 
-        // GET api/<UsersController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
 
         [AllowAnonymous]
@@ -53,34 +41,17 @@ namespace WebApi_InlämningAttempt4.Controllers
             return new BadRequestResult();
         }
 
-
-
-        //// POST api/<UsersController>
-        //[AllowAnonymous]
-        //[HttpPost("issuecreate")]
-        //public async Task<IActionResult> IssueCreate([FromBody] CreateIssueModel createIssueModel)
-        //{
-        //    if (await _identity.CreateIssueAsync(createIssueModel))
-        //    {
-        //        return new OkResult();
-        //    }
-        //    return new BadRequestResult();
-        //}
-
-
-
-        //[AllowAnonymous]
-        //[HttpPut("issueupdate")]
-        //public async Task<IActionResult> IssueUpdate([FromBody] UpdateIssueModel updateIssueModel)
-        //{
-        //    if( await _identity.UpdateIssueAsync(updateIssueModel))
-        //    {
-        //        return new OkResult();
-        //    }
-        //    return new BadRequestResult();
-        //}
-
-        // PUT api/<UsersController>/5
+        [AllowAnonymous]
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn([FromBody] SignInModel signInModel)
+        {
+            var response = await _identity.SignInAsync(signInModel.Email, signInModel.Password);
+            if (response.Succeded)
+            {
+                return new OkObjectResult(response.Result);
+            }
+            return new BadRequestObjectResult(response);
+        }
 
     }
 }

@@ -1,8 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using WebApi_InlämningAttempt4.Data;
 using WebApi_InlämningAttempt4.Models;
@@ -62,6 +66,69 @@ namespace WebApi_InlämningAttempt4.Services
             }
             return false;
         }
+
+        public async Task<SignInResponseModel> SignInAsync(string Email, string Password)
+        {
+
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == Email);
+
+                if (user != null)
+                {
+                    try
+                    {
+                        if (user.ValidatePasswordHash(Password))
+                        {
+                            var tokenHandler = new JwtSecurityTokenHandler();
+                            var _secretKey = Encoding.UTF8.GetBytes(_configuration.GetSection("SecretKey").Value);
+
+                            var tokenDescriptor = new SecurityTokenDescriptor
+                            {
+                                Subject = new ClaimsIdentity(new Claim[] { new Claim("UserId", user.Id.ToString()) }),
+                                Expires = DateTime.Now.AddMinutes(5),
+                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secretKey), SecurityAlgorithms.HmacSha512Signature)
+                            };
+
+                            var _accessToken = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+
+                            _context.SessionTokens.Add(new SessionToken { UserId = user.Id, AccessToken = _accessToken });
+
+                            await _context.SaveChangesAsync();
+
+                            return new SignInResponseModel
+                            {
+                                Succeded = true,
+                                Result = new SignInResponseResult
+                                {
+                                    Id = user.Id,
+                                    Email = user.Email,
+                                    AccessToken = _accessToken
+
+                                }
+                            };
+
+                        }
+                    }
+                    catch
+                    {
+
+
+                    }
+                }
+
+            }
+            catch 
+            {
+
+                
+            }
+
+            return new SignInResponseModel { Succeded = false };
+            
+
+        }
+
 
         public async Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel)
         {
@@ -264,6 +331,8 @@ namespace WebApi_InlämningAttempt4.Services
             return result;
 
         }
+
+
 
 
         //Orderby och OrderByDecending(x => x. Created)

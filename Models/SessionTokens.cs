@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-#nullable disable
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebApi_InlämningAttempt4.Models
 {
-    public partial class SessionToken
+    public class SessionTokens
     {
         public long UserId { get; set; }
-        [Column(TypeName = "varbinary(max)")]
+       
         public string AccessToken { get; set; }
 
         public virtual User User { get; set; }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,10 +8,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WebApi_InlämningAttempt4.Data;
 using WebApi_InlämningAttempt4.Services;
@@ -35,6 +38,40 @@ namespace WebApi_InlämningAttempt4
             services.AddCors();
 
             services.AddDbContext<SqlDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
+
+
+            services.AddAuthentication(Auth =>
+            {
+                Auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                Auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(Jwt =>
+            {
+                Jwt.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var userId = int.Parse(context.Principal.FindFirst("UserId").Value);
+                        if (userId < 1)
+                        {
+                            context.Fail("Unauthoirzed");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+
+                Jwt.RequireHttpsMetadata = true;
+                Jwt.SaveToken = true;
+                Jwt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    ValidateAudience = false,
+
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("SecretKey").Value))
+                };
+            });
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
