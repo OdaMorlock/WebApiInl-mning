@@ -46,7 +46,12 @@ namespace WebApi_InlämningAttempt4.Controllers
 
                 try
                 {
-                    var list = await _identity.GetListOfIssuesByCustomerName(Customer);
+                    var list = await _identity.GetListOfIssuesByCustomerNameAsync(Customer);
+
+                    if (!list.Any())
+                    {
+                        return new BadRequestObjectResult($"{Customer} Did not Match Any Customer  ");
+                    }
 
                     return new OkObjectResult(list);
                 }
@@ -55,7 +60,7 @@ namespace WebApi_InlämningAttempt4.Controllers
 
                    
                 }
-                return new BadRequestObjectResult($"{Customer} Did not Match Any Customer  ");
+                return new BadRequestObjectResult($"Did not enter Try Catch  {Customer} ");
 
 
             }
@@ -66,7 +71,7 @@ namespace WebApi_InlämningAttempt4.Controllers
                 {
                     if (Status.Equals("Active") | Status.Equals("InActive") | Status.Equals("Finished"))
                     {
-                        return new OkObjectResult(await _identity.GetListOfIssuesByStatus(Status));
+                        return new OkObjectResult(await _identity.GetListOfIssuesByStatusAsync(Status));
                     }
                    
                 }
@@ -75,7 +80,7 @@ namespace WebApi_InlämningAttempt4.Controllers
 
                     
                 }
-                return new BadRequestObjectResult($"{Status} Did not Match Any Status  ");
+                return new BadRequestObjectResult($"{Status} Did not Match Any Status Try    Active  Or  InActive  Or  Finished");
 
             }
             if (Created != null)
@@ -84,11 +89,13 @@ namespace WebApi_InlämningAttempt4.Controllers
                 {
                     
                     DateTime _created = DateTime.Parse(Created);
-                    var _date = _created.Date;
-                    var _hour = _created.Hour;
+                    var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_created);
+                    if (!_list.Any())
+                    {
+                        return new BadRequestObjectResult($"{Created} Did not Match any Issue");
+                    }
+                    return new OkObjectResult(_list);
 
-                    //return new OkObjectResult( await _identity.GetListOfIssuesByDateCreated(_created));
-                    return new OkObjectResult("Created Found" + " " + " Date " + _date + " " + " Hour " + _hour);
 
                 }
                 catch 
@@ -104,15 +111,23 @@ namespace WebApi_InlämningAttempt4.Controllers
 
                 try
                 {
+
                     DateTime _edited = DateTime.Parse(Edited);
-                    return new OkObjectResult(await _identity.GetListOfIssuesByDateEdited(_edited));
+                    var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_edited);
+                    if (!_list.Any())
+                    {
+                        return new BadRequestObjectResult($"{Edited} Did not match any Issue");
+                    }
+                    return new OkObjectResult(_list);
+
+
                 }
-                catch 
+                catch
                 {
 
-                    
+
                 }
-                return new BadRequestObjectResult("Chould not convert Eited into DateTime try   0000-00-00    format  ");
+                return new BadRequestObjectResult($"Chould Not Convert {Edited} into Date Time try   0000-00-00  format  ");
 
             }
 

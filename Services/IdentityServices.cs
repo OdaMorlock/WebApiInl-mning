@@ -163,7 +163,7 @@ namespace WebApi_InlämningAttempt4.Services
             return lists;
         }
 
-        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByCustomerName(string CustomerName)
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByCustomerNameAsync(string CustomerName)
         {
             var lists = new List<ListIssuesModel>();
             
@@ -190,7 +190,7 @@ namespace WebApi_InlämningAttempt4.Services
 
         }
 
-        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByStatus(string Status)
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByStatusAsync(string Status)
         {
             var lists = new List<ListIssuesModel>();
 
@@ -216,14 +216,53 @@ namespace WebApi_InlämningAttempt4.Services
 
         }
 
-        public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateCreated(DateTime Created)
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateCreatedAsync(DateTime Created)
         {
-            throw new NotImplementedException();
+            var lists = new List<ListIssuesModel>();
+
+
+
+            foreach (var issue in await _context.Issues.ToListAsync())
+            {
+                lists.Add(new ListIssuesModel
+                {
+                    IssuesId = issue.Id,
+                    CustomerName = issue.Customer,
+                    IssueUser = issue.IssueUserFirstName,
+                    CurrentStatus = issue.CurrentStatus,
+                    CreatedDate = issue.CreatedDate,
+                    EditedDate = issue.EditedDate
+                });
+            }
+            var _date = Created.Date;
+            var _hour = Created.Hour;
+            var result = lists.FindAll(x => x.EditedDate.Date == _date);
+            return result;
         }
 
-        public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateEdited(DateTime Edited)
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateEditedAsync(DateTime Edited)
         {
-            throw new NotImplementedException();
+            var lists = new List<ListIssuesModel>();
+
+
+
+            foreach (var issue in await _context.Issues.ToListAsync())
+            {
+                lists.Add(new ListIssuesModel
+                {
+                    IssuesId = issue.Id,
+                    CustomerName = issue.Customer,
+                    IssueUser = issue.IssueUserFirstName,
+                    CurrentStatus = issue.CurrentStatus,
+                    CreatedDate = issue.CreatedDate,
+                    EditedDate = issue.EditedDate
+                });
+            }
+            var _date = Edited.Date;
+            var _hour = Edited.Hour;
+            var result = lists.FindAll(x => x.EditedDate.Date == _date);
+            return result;
+
         }
 
 
