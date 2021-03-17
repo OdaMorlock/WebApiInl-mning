@@ -163,6 +163,9 @@ namespace WebApi_InlämningAttempt4.Services
             return lists;
         }
 
+
+        //Orderby och OrderByDecending(x => x. Created)
+
         public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesBySearch()
         {
             throw new NotImplementedException();

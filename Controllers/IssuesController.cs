@@ -35,8 +35,35 @@ namespace WebApi_InlämningAttempt4.Controllers
 
         [AllowAnonymous]
         [HttpGet("searchlistissues")]
-        public async Task<IActionResult> GetIssuesBySearch()
+        public async Task<IActionResult> GetIssuesByQuery(string CustomerName, string Status, string Created, string Edited)
         {
+
+            //https://docs.microsoft.com/en-us/dotnet/api/system.web.httprequest.querystring?view=netframework-4.8
+
+
+           // string CustomerName = Request.Query[ "Customer"];
+            //string Status = Request.Query["Status"];
+            //string Created =  Request.Query["Created"];
+            //string Edited = Request.Query["Edited"];
+
+            if (CustomerName != null)
+            {
+                return new OkObjectResult("CustomerName Found" + " " + CustomerName );
+            }
+            if (Status != null)
+            {
+                return new OkObjectResult("Status Found" + " " + Status );
+            }
+            if (Created != null)
+            {
+                return new OkObjectResult("Created Found" + " " + Created );
+            }
+            if (Edited != null)
+            {
+                return new OkObjectResult("Edited Found" + " " + Edited );
+            }
+
+            return new BadRequestObjectResult("No Valid Search Paramaters found try   Customer  Or  Status  Or  Created  Or  Edited");
 
         }
 
