@@ -13,8 +13,11 @@ namespace WebApi_InlämningAttempt4.Services
         Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel);
 
         Task<bool> UpdateIssueAsync(UpdateIssueModel updateIssueModel);
-        Task<IEnumerable<ListIssuesModel>> GetListOfIssues();
-        Task<IEnumerable<ListIssuesModel>> GetListOfIssuesBySearch();
+        Task<IEnumerable<ListIssuesModel>> GetListOfIssuesAsync();
+        Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByCustomerName(string CustomerName);
+        Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByStatus(string Status);
+        Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateCreated(DateTime Created);
+        Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateEdited(DateTime Edited);
 
     }
 }

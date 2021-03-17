@@ -28,39 +28,92 @@ namespace WebApi_InlämningAttempt4.Controllers
 
         [AllowAnonymous]
         [HttpGet("listissues")]
-        public async Task<IActionResult> GetIssues()
+        public async Task<IActionResult> GetIssuesAsync()
         {
-            return new OkObjectResult(await _identity.GetListOfIssues());
+            return new OkObjectResult(await _identity.GetListOfIssuesAsync());
         }
 
         [AllowAnonymous]
         [HttpGet("searchlistissues")]
-        public async Task<IActionResult> GetIssuesByQuery(string CustomerName, string Status, string Created, string Edited)
+        public async Task<IActionResult> GetIssuesByQueryAsync(string Customer, string Status, string Created, string Edited)
         {
 
-            //https://docs.microsoft.com/en-us/dotnet/api/system.web.httprequest.querystring?view=netframework-4.8
+            //https://stackoverflow.com/questions/38738725/having-multiple-get-methods-with-multiple-query-string-parameters-in-asp-net-cor
+            //https://docs.microsoft.com/en-us/dotnet/standard/base-types/parsing-datetime
 
-
-           // string CustomerName = Request.Query[ "Customer"];
-            //string Status = Request.Query["Status"];
-            //string Created =  Request.Query["Created"];
-            //string Edited = Request.Query["Edited"];
-
-            if (CustomerName != null)
+            if (Customer != null)
             {
-                return new OkObjectResult("CustomerName Found" + " " + CustomerName );
+
+                try
+                {
+                    var list = await _identity.GetListOfIssuesByCustomerName(Customer);
+
+                    return new OkObjectResult(list);
+                }
+                catch 
+                {
+
+                   
+                }
+                return new BadRequestObjectResult($"{Customer} Did not Match Any Customer  ");
+
+
             }
             if (Status != null)
             {
-                return new OkObjectResult("Status Found" + " " + Status );
+
+                try
+                {
+                    if (Status.Equals("Active") | Status.Equals("InActive") | Status.Equals("Finished"))
+                    {
+                        return new OkObjectResult(await _identity.GetListOfIssuesByStatus(Status));
+                    }
+                   
+                }
+                catch 
+                {
+
+                    
+                }
+                return new BadRequestObjectResult($"{Status} Did not Match Any Status  ");
+
             }
             if (Created != null)
             {
-                return new OkObjectResult("Created Found" + " " + Created );
+                try
+                {
+                    
+                    DateTime _created = DateTime.Parse(Created);
+                    var _date = _created.Date;
+                    var _hour = _created.Hour;
+
+                    //return new OkObjectResult( await _identity.GetListOfIssuesByDateCreated(_created));
+                    return new OkObjectResult("Created Found" + " " + " Date " + _date + " " + " Hour " + _hour);
+
+                }
+                catch 
+                {
+
+                   
+                }
+                return new BadRequestObjectResult($"Chould Not Convert {Created} into Date Time try   0000-00-00  format  ");
+
             }
             if (Edited != null)
             {
-                return new OkObjectResult("Edited Found" + " " + Edited );
+
+                try
+                {
+                    DateTime _edited = DateTime.Parse(Edited);
+                    return new OkObjectResult(await _identity.GetListOfIssuesByDateEdited(_edited));
+                }
+                catch 
+                {
+
+                    
+                }
+                return new BadRequestObjectResult("Chould not convert Eited into DateTime try   0000-00-00    format  ");
+
             }
 
             return new BadRequestObjectResult("No Valid Search Paramaters found try   Customer  Or  Status  Or  Created  Or  Edited");
@@ -70,7 +123,7 @@ namespace WebApi_InlämningAttempt4.Controllers
 
         [AllowAnonymous]
         [HttpPost("issuecreate")]
-        public async Task<IActionResult> IssueCreate([FromBody] CreateIssueModel createIssueModel)
+        public async Task<IActionResult> IssueCreateAsync([FromBody] CreateIssueModel createIssueModel)
         {
             if (await _identity.CreateIssueAsync(createIssueModel))
             {
@@ -83,7 +136,7 @@ namespace WebApi_InlämningAttempt4.Controllers
 
         [AllowAnonymous]
         [HttpPut("issueupdate")]
-        public async Task<IActionResult> IssueUpdate([FromBody] UpdateIssueModel updateIssueModel)
+        public async Task<IActionResult> IssueUpdateAsync([FromBody] UpdateIssueModel updateIssueModel)
         {
             if (await _identity.UpdateIssueAsync(updateIssueModel))
             {

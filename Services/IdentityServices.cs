@@ -144,7 +144,7 @@ namespace WebApi_InlämningAttempt4.Services
             return false;
         }
 
-        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssues()
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesAsync()
         {
             var lists = new List<ListIssuesModel>();
 
@@ -163,13 +163,75 @@ namespace WebApi_InlämningAttempt4.Services
             return lists;
         }
 
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByCustomerName(string CustomerName)
+        {
+            var lists = new List<ListIssuesModel>();
+            
 
-        //Orderby och OrderByDecending(x => x. Created)
 
-        public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesBySearch()
+            foreach (var issue in await _context.Issues.ToListAsync())
+            {
+                lists.Add(new ListIssuesModel
+                {
+                    IssuesId = issue.Id,
+                    CustomerName = issue.Customer,
+                    IssueUser = issue.IssueUserFirstName,
+                    CurrentStatus = issue.CurrentStatus,
+                    CreatedDate = issue.CreatedDate,
+                    EditedDate = issue.EditedDate
+                });
+            }
+
+            var result = lists.FindAll(x => x.CustomerName == CustomerName);
+            return result;
+
+
+
+
+        }
+
+        public async Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByStatus(string Status)
+        {
+            var lists = new List<ListIssuesModel>();
+
+
+            foreach (var issue in await _context.Issues.ToListAsync())
+            {
+                lists.Add(new ListIssuesModel
+                {
+                    IssuesId = issue.Id,
+                    CustomerName = issue.Customer,
+                    IssueUser = issue.IssueUserFirstName,
+                    CurrentStatus = issue.CurrentStatus,
+                    CreatedDate = issue.CreatedDate,
+                    EditedDate = issue.EditedDate
+                });
+            }
+
+           var result =  lists.FindAll(x => x.CurrentStatus == Status);
+
+          
+
+           return result;
+
+        }
+
+        public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateCreated(DateTime Created)
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<ListIssuesModel>> GetListOfIssuesByDateEdited(DateTime Edited)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        //Orderby och OrderByDecending(x => x. Created)
+
+
+
+
     }
 }
     
