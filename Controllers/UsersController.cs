@@ -27,7 +27,16 @@ namespace WebApi_InlämningAttempt4.Controllers
             _identity = identity;
         }
 
+        private RequestUserModel IdentityRequest()
+        {
 
+            return new RequestUserModel
+            {
+                UserId = int.Parse(HttpContext.User.FindFirst("UserId").Value),
+                AccessToken = Request.Headers["Authorization"].ToString().Split(" ")[1]
+
+            };
+        }
 
 
         [AllowAnonymous]
@@ -51,6 +60,26 @@ namespace WebApi_InlämningAttempt4.Controllers
                 return new OkObjectResult(response.Result);
             }
             return new BadRequestObjectResult(response);
+        }
+
+        [HttpGet("getusers")]
+        public async Task<IActionResult> GetUsersAsync()
+        {
+            if (_identity.ValidateAccessRights(IdentityRequest()))
+            {
+                return new OkObjectResult(await _identity.GetListOfUsersAsync());
+            }
+            return new UnauthorizedResult();
+        }
+
+        [HttpGet("getissueusers")]
+        public async Task<IActionResult> GetIssueUserAsync()
+        {
+            if (_identity.ValidateAccessRights(IdentityRequest()))
+            {
+                return new OkObjectResult(await _identity.GetListOfIssueUserAsync());
+            }
+            return new UnauthorizedResult();
         }
 
     }

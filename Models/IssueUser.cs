@@ -12,6 +12,11 @@ namespace WebApi_InlämningAttempt4.Models
             Issues = new HashSet<Issue>();
         }
 
+        public IssueUser(long userId)
+        {
+            UserId = userId;
+        }
+
         public long Id { get; set; }
         public long UserId { get; set; }
         public string UserFirstName { get; set; }

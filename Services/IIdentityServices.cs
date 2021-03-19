@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi_InlämningAttempt4.Models;
 using WebApi_InlämningAttempt4.Models.Model;
 
 namespace WebApi_InlämningAttempt4.Services
@@ -12,6 +13,9 @@ namespace WebApi_InlämningAttempt4.Services
         Task<bool> CreateUserAsync(SignUpModel signUpModel);
 
         Task<SignInResponseModel> SignInAsync(string Email, string Password);
+
+        Task<IEnumerable<GetUsersModel>> GetListOfUsersAsync();
+        Task<IEnumerable<GetIssueUserModel>> GetListOfIssueUserAsync();
 
         Task<bool> CreateIssueAsync(CreateIssueModel createIssueModel);
 

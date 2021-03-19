@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -49,5 +50,7 @@ namespace WebApi_InlämningAttempt4.Models
         }
 
         public virtual ICollection<IssueUser> IssueUsers { get; set; }
+
+       
     }
 }

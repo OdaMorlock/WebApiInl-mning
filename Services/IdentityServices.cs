@@ -19,6 +19,7 @@ namespace WebApi_InlämningAttempt4.Services
         private readonly SqlDbContext _context;
         private IConfiguration _configuration { get; }
 
+
         public IdentityServices(SqlDbContext context, IConfiguration configuration)
         {
             _context = context;
@@ -134,6 +135,60 @@ namespace WebApi_InlämningAttempt4.Services
 
             return new SignInResponseModel { Succeded = false };
             
+
+        }
+
+        public async Task<IEnumerable<GetUsersModel>> GetListOfUsersAsync()
+        {
+            
+
+            var lists = new List<GetUsersModel>();
+            var IssueUser = new List<GetIssueUserModel>();
+
+            foreach (var issueUser in await _context.IssueUsers.ToListAsync())
+            {
+                IssueUser.Add(new GetIssueUserModel
+                {
+                    UserId = issueUser.UserId,
+                    Id = issueUser.Id,
+                    UserFirstName = issueUser.UserFirstName
+
+                });
+            }
+
+            
+
+
+            foreach (var user in await _context.Users.ToListAsync())
+            {
+
+                lists.Add(new GetUsersModel{
+                    UserId = user.Id,
+                    UserName = ($"{user.FirstName}  {user.LastName}"),
+                    Role = DecideRole(IssueUser, user.Id)
+                    
+                });
+            }
+            return lists;
+
+            
+        }
+
+        public async Task<IEnumerable<GetIssueUserModel>> GetListOfIssueUserAsync()
+        {
+            var IssueUser = new List<GetIssueUserModel>();
+
+            foreach (var issueUser in await _context.IssueUsers.ToListAsync())
+            {
+                IssueUser.Add(new GetIssueUserModel
+                {
+                    UserId = issueUser.UserId,
+                    Id = issueUser.Id,
+                    UserFirstName = issueUser.UserFirstName               
+
+                });
+            }
+            return IssueUser;
 
         }
 
@@ -339,6 +394,23 @@ namespace WebApi_InlämningAttempt4.Services
             return result;
 
         }
+
+
+        private string DecideRole(List<GetIssueUserModel> getIssueUserModels, long UserId)
+        {
+
+            var _role = "None";
+
+            var _result = getIssueUserModels.Exists(x => x.UserId == UserId);
+
+            if (_result)
+            {
+                _role = "IssueUser";
+                return _role;
+            }
+            return _role;
+        }
+
 
 
 
