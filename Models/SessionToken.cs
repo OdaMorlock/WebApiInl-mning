@@ -9,7 +9,7 @@ namespace WebApi_InlämningAttempt4.Models
     public partial class SessionToken
     {
         public long UserId { get; set; }
-        [Column(TypeName = "varbinary(max)")]
+
         public string AccessToken { get; set; }
 
         public virtual User User { get; set; }
