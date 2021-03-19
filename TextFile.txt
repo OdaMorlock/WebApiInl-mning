@@ -1,0 +1,4 @@
+﻿För att få SessionToken att funka måste man använda Update-Database för att få in SessionTokenCodeFirst. SessionToken var gjord med NewQuery tillsammans med de andra tabbelerna men sessiontoken funkar ej
+för jag hittade inte hur jag gör [DatabaseGenerated(DatabaseGeneratedOption.None)] i NewQuery
+
+//Marcus Bäckström
