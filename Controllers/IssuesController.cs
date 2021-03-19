@@ -26,14 +26,29 @@ namespace WebApi_InlämningAttempt4.Controllers
             _identity = identity;
         }
 
-        [AllowAnonymous]
+        private RequestUserModel IdentityRequest()
+        {
+
+            return new RequestUserModel
+            {
+                UserId = int.Parse(HttpContext.User.FindFirst("UserId").Value),
+                AccessToken = Request.Headers["Authorization"].ToString().Split(" ")[1]
+
+            };
+        }
+
+
+        
         [HttpGet("listissues")]
         public async Task<IActionResult> GetIssuesAsync()
         {
-            return new OkObjectResult(await _identity.GetListOfIssuesAsync());
+            if (_identity.ValidateAccessRights(IdentityRequest()))
+            {
+                return new OkObjectResult(await _identity.GetListOfIssuesAsync());
+            }
+            return new UnauthorizedResult();
         }
 
-        [AllowAnonymous]
         [HttpGet("searchlistissues")]
         public async Task<IActionResult> GetIssuesByQueryAsync(string Customer, string Status, string Created, string Edited)
         {
@@ -41,123 +56,139 @@ namespace WebApi_InlämningAttempt4.Controllers
             //https://stackoverflow.com/questions/38738725/having-multiple-get-methods-with-multiple-query-string-parameters-in-asp-net-cor
             //https://docs.microsoft.com/en-us/dotnet/standard/base-types/parsing-datetime
 
-            if (Customer != null)
+            if (_identity.ValidateAccessRights(IdentityRequest()))
             {
-
-                try
+                if (Customer != null)
                 {
-                    var list = await _identity.GetListOfIssuesByCustomerNameAsync(Customer);
 
-                    if (!list.Any())
+                    try
                     {
-                        return new BadRequestObjectResult($"{Customer} Did not Match Any Customer  ");
+                        var list = await _identity.GetListOfIssuesByCustomerNameAsync(Customer);
+
+                        if (!list.Any())
+                        {
+                            return new BadRequestObjectResult($"{Customer} Did not Match Any Customer  ");
+                        }
+
+                        return new OkObjectResult(list);
                     }
-
-                    return new OkObjectResult(list);
-                }
-                catch 
-                {
-
-                   
-                }
-                return new BadRequestObjectResult($"Did not enter Try Catch  {Customer} ");
-
-
-            }
-            if (Status != null)
-            {
-
-                try
-                {
-                    if (Status.Equals("Active") | Status.Equals("InActive") | Status.Equals("Finished"))
+                    catch
                     {
-                        return new OkObjectResult(await _identity.GetListOfIssuesByStatusAsync(Status));
+
+
                     }
-                   
+                    return new BadRequestObjectResult($"Did not enter Try Catch  {Customer} ");
+
+
                 }
-                catch 
+                if (Status != null)
                 {
 
-                    
-                }
-                return new BadRequestObjectResult($"{Status} Did not Match Any Status Try    Active  Or  InActive  Or  Finished");
-
-            }
-            if (Created != null)
-            {
-                try
-                {
-                    
-                    DateTime _created = DateTime.Parse(Created);
-                    var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_created);
-                    if (!_list.Any())
+                    try
                     {
-                        return new BadRequestObjectResult($"{Created} Did not Match any Issue");
+                        if (Status.Equals("Active") | Status.Equals("InActive") | Status.Equals("Finished"))
+                        {
+                            return new OkObjectResult(await _identity.GetListOfIssuesByStatusAsync(Status));
+                        }
+
                     }
-                    return new OkObjectResult(_list);
-
-
-                }
-                catch 
-                {
-
-                   
-                }
-                return new BadRequestObjectResult($"Chould Not Convert {Created} into Date Time try   0000-00-00  format  ");
-
-            }
-            if (Edited != null)
-            {
-
-                try
-                {
-
-                    DateTime _edited = DateTime.Parse(Edited);
-                    var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_edited);
-                    if (!_list.Any())
+                    catch
                     {
-                        return new BadRequestObjectResult($"{Edited} Did not match any Issue");
-                    }
-                    return new OkObjectResult(_list);
 
+
+                    }
+                    return new BadRequestObjectResult($"{Status} Did not Match Any Status Try    Active  Or  InActive  Or  Finished");
 
                 }
-                catch
+                if (Created != null)
+                {
+                    try
+                    {
+
+                        DateTime _created = DateTime.Parse(Created);
+                        var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_created);
+                        if (!_list.Any())
+                        {
+                            return new BadRequestObjectResult($"{Created} Did not Match any Issue");
+                        }
+                        return new OkObjectResult(_list);
+
+
+                    }
+                    catch
+                    {
+
+
+                    }
+                    return new BadRequestObjectResult($"Chould Not Convert {Created} into Date Time try   0000-00-00  format  ");
+
+                }
+                if (Edited != null)
                 {
 
+                    try
+                    {
+
+                        DateTime _edited = DateTime.Parse(Edited);
+                        var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_edited);
+                        if (!_list.Any())
+                        {
+                            return new BadRequestObjectResult($"{Edited} Did not match any Issue");
+                        }
+                        return new OkObjectResult(_list);
+
+
+                    }
+                    catch
+                    {
+
+
+                    }
+                    return new BadRequestObjectResult($"Chould Not Convert {Edited} into Date Time try   0000-00-00  format  ");
 
                 }
-                return new BadRequestObjectResult($"Chould Not Convert {Edited} into Date Time try   0000-00-00  format  ");
 
+                return new BadRequestObjectResult("No Valid Search Paramaters found try   Customer  Or  Status  Or  Created  Or  Edited");
             }
+            return new UnauthorizedResult();
 
-            return new BadRequestObjectResult("No Valid Search Paramaters found try   Customer  Or  Status  Or  Created  Or  Edited");
+          
 
         }
 
 
-        [AllowAnonymous]
+        
         [HttpPost("issuecreate")]
         public async Task<IActionResult> IssueCreateAsync([FromBody] CreateIssueModel createIssueModel)
         {
-            if (await _identity.CreateIssueAsync(createIssueModel))
+            if (_identity.ValidateAccessRights(IdentityRequest()))
             {
-                return new OkResult();
+                if (await _identity.CreateIssueAsync(createIssueModel))
+                {
+                    return new OkResult();
+                }
+                return new BadRequestResult();
             }
-            return new BadRequestResult();
+            return new UnauthorizedResult();
+
         }
 
 
 
-        [AllowAnonymous]
+        
         [HttpPut("issueupdate")]
         public async Task<IActionResult> IssueUpdateAsync([FromBody] UpdateIssueModel updateIssueModel)
         {
-            if (await _identity.UpdateIssueAsync(updateIssueModel))
+            if (_identity.ValidateAccessRights(IdentityRequest()))
             {
-                return new OkResult();
+                if (await _identity.UpdateIssueAsync(updateIssueModel))
+                {
+                    return new OkResult();
+                }
+                return new BadRequestResult();
             }
-            return new BadRequestResult();
+            return new UnauthorizedResult();
+
         }
     }
 

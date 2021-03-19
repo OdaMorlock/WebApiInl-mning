@@ -8,6 +8,7 @@ namespace WebApi_InlämningAttempt4.Services
 {
     public interface IIdentityServices
     {
+        bool ValidateAccessRights(RequestUserModel requestUserModel);
         Task<bool> CreateUserAsync(SignUpModel signUpModel);
 
         Task<SignInResponseModel> SignInAsync(string Email, string Password);

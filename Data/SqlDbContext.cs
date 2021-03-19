@@ -23,6 +23,8 @@ namespace WebApi_InlämningAttempt4.Data
         public virtual DbSet<SessionToken> SessionTokens { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
+        public DbSet<SessionTokenCodeFirst> SessionTokenCodeFirsts { get; set; }
+
        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

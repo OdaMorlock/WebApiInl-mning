@@ -25,7 +25,15 @@ namespace WebApi_InlämningAttempt4.Services
             _configuration = configuration;
         }
 
-       
+        public bool ValidateAccessRights(RequestUserModel requestUserModel)
+        {
+            if (_context.SessionTokenCodeFirsts.Any(user => user.UserId == requestUserModel.UserId && user.AccessToken == requestUserModel.AccessToken))
+            {
+                return true;
+            }
+            return false;
+        }   
+
         public async Task<bool> CreateUserAsync(SignUpModel signUpModel)
         {
             if (! _context.Users.Any(user => user.Email == signUpModel.Email))
@@ -92,7 +100,7 @@ namespace WebApi_InlämningAttempt4.Services
 
                             var _accessToken = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
 
-                            _context.SessionTokens.Add(new SessionToken { UserId = user.Id, AccessToken = _accessToken });
+                            _context.SessionTokenCodeFirsts.Add(new SessionTokenCodeFirst { UserId = user.Id, AccessToken = _accessToken });
 
                             await _context.SaveChangesAsync();
 
