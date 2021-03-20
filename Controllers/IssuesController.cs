@@ -49,10 +49,11 @@ namespace WebApi_InlämningAttempt4.Controllers
             return new UnauthorizedResult();
         }
 
+        
         [HttpGet("searchlistissues")]
         public async Task<IActionResult> GetIssuesByQueryAsync(string Customer, string Status, string Created, string Edited)
         {
-
+            var test = true;
             //https://stackoverflow.com/questions/38738725/having-multiple-get-methods-with-multiple-query-string-parameters-in-asp-net-cor
             //https://docs.microsoft.com/en-us/dotnet/standard/base-types/parsing-datetime
 
@@ -63,6 +64,7 @@ namespace WebApi_InlämningAttempt4.Controllers
 
                     try
                     {
+                    
                         var list = await _identity.GetListOfIssuesByCustomerNameAsync(Customer);
 
                         if (!list.Any())
@@ -106,12 +108,14 @@ namespace WebApi_InlämningAttempt4.Controllers
                     {
 
                         DateTime _created = DateTime.Parse(Created);
-                        var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_created);
+                       var _list = await _identity.GetListOfIssuesByDateCreatedAsync(_created);
+
                         if (!_list.Any())
                         {
                             return new BadRequestObjectResult($"{Created} Did not Match any Issue");
                         }
                         return new OkObjectResult(_list);
+
 
 
                     }
@@ -148,6 +152,7 @@ namespace WebApi_InlämningAttempt4.Controllers
 
                 }
 
+
                 return new BadRequestObjectResult("No Valid Search Paramaters found try   Customer  Or  Status  Or  Created  Or  Edited");
             }
             return new UnauthorizedResult();
@@ -156,8 +161,47 @@ namespace WebApi_InlämningAttempt4.Controllers
 
         }
 
-
         
+        [HttpGet("orderlistby")]
+        public async Task<IActionResult> GetIssueByOrderAsync(string OrderBy,string Status,string Customer)
+        {
+            var test = true;
+            //https://stackoverflow.com/questions/38738725/having-multiple-get-methods-with-multiple-query-string-parameters-in-asp-net-cor
+            //https://docs.microsoft.com/en-us/dotnet/standard/base-types/parsing-datetime
+
+            if (_identity.ValidateAccessRights(IdentityRequest()))
+            {
+                var _list = await _identity.GetListOfIssuesAsync();
+
+
+                if (OrderBy == "Created")
+                {
+                    var _created = _list.OrderBy(x => x.CreatedDate);
+                    return new OkObjectResult(_created);
+                }
+                if (OrderBy == "Edited")
+                {
+                    var _edited = _list.OrderBy(x => x.EditedDate);
+                    return new OkObjectResult(_edited);
+                }
+                if (OrderBy == "Status")
+                {
+                    var _status = _list.OrderByDescending(x => x.CurrentStatus == Status);
+                    return new OkObjectResult(_status);
+                }
+                if (OrderBy == "Customer")
+                {
+                    var _customer = _list.OrderByDescending(x => x.CustomerName == Customer);
+                    return new OkObjectResult(_customer);
+                }
+
+                return new BadRequestObjectResult("No Valid Search Paramaters found try   Customer  Or  Status  Or  Created  Or  Edited");
+            }
+            return new UnauthorizedResult();
+
+        }
+
+
         [HttpPost("issuecreate")]
         public async Task<IActionResult> IssueCreateAsync([FromBody] CreateIssueModel createIssueModel)
         {

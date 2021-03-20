@@ -45,9 +45,9 @@ namespace WebApi_InlämningAttempt4.Controllers
         {
             if (await _identity.CreateUserAsync(signUpModel))
             {
-                return new OkResult();
+                return new OkObjectResult($"Succedded in Signing Up {signUpModel.FirstName} ");
             }
-            return new BadRequestResult();
+            return new BadRequestObjectResult($"Failed in Signing Up {signUpModel.FirstName}");
         }
 
         [AllowAnonymous]
